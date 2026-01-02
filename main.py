@@ -2,11 +2,8 @@ from flask import Flask, request, jsonify, render_template_string, send_from_dir
 from flask_cors import CORS
 import os
 import sys
-
-# Add the backend directory to the Python path
 sys.path.append(os.path.join(os.path.dirname(__file__), 'backend'))
 
-# Import the chatbot function
 try:
     from chatbot import ChatBot as ChatBotFunction
     CHATBOT_AVAILABLE = True
@@ -15,7 +12,7 @@ except ImportError as e:
     CHATBOT_AVAILABLE = False
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app)  
 
 @app.route('/')
 def index():
@@ -81,7 +78,6 @@ def chat():
                 'response': 'Sorry, the AI chatbot service is currently unavailable. Please check the backend configuration.'
             }), 503
 
-        # Get the message from the request
         data = request.get_json()
         
         if not data or 'message' not in data:
@@ -98,7 +94,6 @@ def chat():
                 'response': 'Please provide a non-empty message.'
             }), 400
 
-        # Get response from the chatbot
         try:
             bot_response = ChatBotFunction(user_message)
             
@@ -150,15 +145,13 @@ def internal_error(error):
     }), 500
 
 if __name__ == '__main__':
-    # Check if required files exist
     required_files = ['index.html', 'styles.css', 'script.js']
     missing_files = [f for f in required_files if not os.path.exists(f)]
     
     if missing_files:
         print(f"Warning: Missing files: {', '.join(missing_files)}")
         print("Make sure all HTML, CSS, and JS files are in the same directory as this server.")
-    
-    # Check if .env file exists for the chatbot
+
     if not os.path.exists('.env'):
         print("Warning: .env file not found. Make sure it contains GroqAPIKey, Username, and Assistantname.")
     
@@ -167,7 +160,7 @@ if __name__ == '__main__':
     print("Press Ctrl+C to stop the server")
     
     app.run(
-        host='0.0.0.0',  # Accept connections from any IP
+        host='0.0.0.0', 
         port=5000,
         debug=True,
         threaded=True
